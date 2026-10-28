@@ -98,3 +98,38 @@ Manual checklist:
 7. Check the console, narrow-window layout, and production preview.
 
 Review exercise: after moving right from [(10,10), (9,10), (8,10)], the new array is [(11,10), (10,10), (9,10)]. Why does adding a head without removing the tail produce growth instead?
+
+
+## Milestone 3: food, growth, score, and finished outcomes
+
+Milestone 2 was committed with approval before beginning this work. AI implemented the authorized milestone 3; its commit remains subject to review.
+
+Decisions and concepts:
+
+- Food placement enumerates empty cells and selects one uniformly using a random value in [0, 1). This takes O(board area + snake length) time and O(board area) space, which is small for 400 cells. Random retry placement could keep guessing on a nearly full board.
+- Randomness is passed into pure functions, allowing deterministic tests without modifying global Math.random.
+- Eating keeps the old tail and adds a head, growing by exactly one. Score increases only on eating.
+- Wall/body checks happen before changing the board. A failed move preserves the final valid snake and score.
+- A normal move excludes the departing tail from collision checks. Growth includes the tail because it stays in place.
+- An empty-cell scan that finds no remaining cell returns null without sampling randomness. Eating the final cell produces a win and stops movement.
+- Finished games ignore movement, turning, pause, and resume. The interface shows the outcome and final score; reload is the temporary reset until milestone 4.
+- The old four-direction movement test used a body extending left while directing the head left. Self-collision correctly made that fixture invalid. The displacement test now uses a one-segment snake to isolate directional movement; separate tests verify body collisions. Existing tests now use deterministic initial food.
+
+Verification:
+
+- `npm run check`: passed after specifying the button query type for access inside rendering functions.
+- `npm test`: 17 tests cover movement/timing plus growth, stable non-eating score/food, all four walls, body collisions, departing tail, food bounds/occupancy, one empty cell, full board, winning, and inactive finished states.
+- `npm test`: all 17 tests passed.
+- `npm run build`: passed with Vite 8.3.5.
+- `git diff --check`: passed.
+- Browser playthrough, console, resizing, and production-preview checks remain pending.
+
+Manual checks for review:
+
+1. Start and steer to orange food: score and length should each increase by one, and new food should be outside the snake.
+2. Hit a wall: the final valid board should freeze and display the wall outcome and final score.
+3. Reload, grow, and turn into the body: confirm a self-collision loss.
+4. Confirm pause/resume and focus-loss behavior still work; finished runs should not resume.
+5. Reload to reset. Restart controls and finished-screen polish are milestone 4.
+
+Review exercise: why must food detection happen before deciding whether to exclude the tail from collision checks?

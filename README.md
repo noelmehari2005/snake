@@ -4,9 +4,9 @@ A browser-based Snake project exploring game loops, data structures, and collisi
 
 ## Current milestone
 
-Milestone 2 adds movement every 150 ms, arrow/WASD turns, and Start/Pause/Resume. Press Enter to start and Space to pause or resume. Switching tabs or windows automatically pauses; resuming is explicit.
+Milestone 3 adds orange food, growth, scoring, wall/self-collision losses, and a full-board win. Movement runs every 150 ms. Use arrows/WASD to turn, Enter or Start to begin, and Space or the button to pause/resume. Losing focus pauses automatically.
 
-This is an intermediate movement preview: reaching a wall pauses the snake rather than ending a run. Resume and turn before the next tick to move away, or reload to reset. Food, scoring, self-collisions, and wall-loss behavior arrive in milestone 3. See [DESIGN.md](DESIGN.md) for the complete scope.
+Eating adds one segment and one point. A collision freezes the last valid board and displays the final score. Filling the board wins. Reload to reset; restart controls and final interface polish belong to milestone 4. See [DESIGN.md](DESIGN.md) for the complete scope.
 
 ## Run locally
 
@@ -35,9 +35,9 @@ The committed `package-lock.json` locks dependency versions. Use `npm ci` for a 
 - `index.html`: page structure and Canvas element.
 - `src/style.css`: basic readable layout and responsive Canvas sizing.
 - `src/main.ts`: connects browser controls, focus events, animation timing, and rendering.
-- `src/game.ts`: state transitions, queued direction, and one movement step.
+- `src/game.ts`: state transitions, food selection, scoring, collisions, and one movement step.
 - `src/timing.ts`: fixed-interval timing without browser dependencies.
-- `tests/game.test.mjs`: Node built-in tests for movement and timing.
+- `tests/game.test.mjs`: Node built-in tests for game rules and timing.
 - `src/board.ts`: grid dimensions, coordinate type, and initial head-first snake data.
 - `src/render.ts`: draws the background, grid, and snake from coordinates.
 - `tsconfig.json`: strict TypeScript checking, including browser DOM types.

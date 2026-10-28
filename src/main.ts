@@ -4,10 +4,11 @@ import { createGame, pause, play, requestTurn, step, type Direction } from './ga
 import { advanceClock, freshClock } from './timing';
 
 const canvas = document.querySelector('#board');
-const actionButton = document.querySelector('#action');
+const actionButton = document.querySelector<HTMLButtonElement>('#action');
+const scoreElement = document.querySelector('#score');
 const statusElement = document.querySelector('#status');
 if (!(canvas instanceof HTMLCanvasElement) ||
-    !(actionButton instanceof HTMLButtonElement) || !statusElement) {
+    !(actionButton instanceof HTMLButtonElement) || !statusElement || !scoreElement) {
   throw new Error('Required game elements are missing.');
 }
 canvas.width = gridSize * cellSize;
@@ -19,11 +20,14 @@ let game = createGame();
 let clock = freshClock();
 
 function render(): void {
-  drawBoard(context!, game.snake);
+  drawBoard(context!, game.snake, game.food);
+  scoreElement!.textContent = `Score: ${game.score}`;
   actionButton!.textContent = game.phase === 'start' ? 'Start' :
-    game.phase === 'playing' ? 'Pause' : 'Resume';
-  statusElement!.textContent = game.atEdge
-    ? 'Paused at the edge. Reload to reset; wall collisions arrive in milestone 3.'
+    game.phase === 'playing' ? 'Pause' : game.phase === 'gameOver' ? 'Finished' : 'Resume';
+  actionButton!.disabled = game.phase === 'gameOver';
+  statusElement!.textContent = game.phase === 'gameOver'
+    ? `${game.outcome === 'win' ? 'You filled the board — you win!' :
+      game.outcome === 'wall' ? 'Game over: hit a wall.' : 'Game over: hit your body.'} Final score: ${game.score}. Reload to play again.`
     : game.phase === 'start' ? 'Ready. Select Start or press Enter.'
     : game.phase === 'playing' ? 'Playing' : 'Paused';
 }
@@ -51,7 +55,7 @@ window.addEventListener('keydown', (event) => {
   if (direction && game.phase === 'playing') {
     event.preventDefault();
     if (!event.repeat) game = requestTurn(game, direction);
-  } else if (event.key === ' ' && game.phase !== 'start') {
+  } else if (event.key === ' ' && (game.phase === 'playing' || game.phase === 'paused')) {
     event.preventDefault();
     if (!event.repeat) togglePlay();
   } else if (event.key === 'Enter' && game.phase === 'start' && !event.repeat) {

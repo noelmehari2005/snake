@@ -3,20 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Snake — Movement Preview</title>
+    <title>Snake</title>
     <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body>
     <main>
       <h1>Snake</h1>
-      <p>Milestone 2: Movement and controls</p>
+      <p>Milestone 3: Food, growth, and collisions</p>
+      <p id="score">Score: 0</p>
       <canvas id="board" width="400" height="400" aria-label="20 by 20 grid with a three-segment snake; the light green segment is the head">
         This preview requires a browser with Canvas support.
       </canvas>
       <p>Arrow keys or WASD to turn. Space to pause or resume.</p>
       <button id="action" type="button">Start</button>
       <p id="status" role="status">Ready. Select Start or press Enter.</p>
-      <p>Movement preview: pauses at walls. Food and collisions arrive next.</p>
+      <p>Eat orange food to grow. Avoid walls and your body. Reload to reset; restart controls arrive next.</p>
       <noscript>Enable JavaScript to display the preview.</noscript>
     </main>
     <script type="module" src="./src/main.ts"></script>

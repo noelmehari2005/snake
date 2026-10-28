@@ -3,6 +3,7 @@ import { cellSize, gridSize, type Cell } from './board';
 export function drawBoard(
   context: CanvasRenderingContext2D,
   snake: readonly Cell[],
+  food: Cell | null = null,
 ): void {
   const boardSize = gridSize * cellSize;
   context.fillStyle = '#111827';
@@ -20,6 +21,13 @@ export function drawBoard(
     context.lineTo(boardSize, pixel);
   }
   context.stroke();
+
+  if (food) {
+    context.fillStyle = '#fb923c';
+    context.beginPath();
+    context.arc((food.x + 0.5) * cellSize, (food.y + 0.5) * cellSize, cellSize / 3, 0, Math.PI * 2);
+    context.fill();
+  }
 
   snake.forEach((segment, index) => {
     context.fillStyle = index === 0 ? '#bbf7d0' : '#4ade80';
