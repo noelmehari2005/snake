@@ -44,6 +44,11 @@ export function createGame(random: () => number = Math.random): Game {
   };
 }
 
+export function restart(game: Game, random: () => number = Math.random): Game {
+  if (game.phase !== 'paused' && game.phase !== 'gameOver') return game;
+  return createGame(random);
+}
+
 export function requestTurn(game: Game, direction: Direction): Game {
   if (game.phase !== 'playing' || game.pendingDirection !== null) return game;
   const current = offsets[game.direction];

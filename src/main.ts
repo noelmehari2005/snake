@@ -1,35 +1,48 @@
 import { cellSize, gridSize } from './board';
 import { drawBoard } from './render';
-import { createGame, pause, play, requestTurn, step, type Direction } from './game';
+import { createGame, pause, play, requestTurn, restart, step, type Direction } from './game';
 import { advanceClock, freshClock } from './timing';
+import { screenFor } from './view';
 
-const canvas = document.querySelector('#board');
-const actionButton = document.querySelector<HTMLButtonElement>('#action');
-const scoreElement = document.querySelector('#score');
-const statusElement = document.querySelector('#status');
-if (!(canvas instanceof HTMLCanvasElement) ||
-    !(actionButton instanceof HTMLButtonElement) || !statusElement || !scoreElement) {
-  throw new Error('Required game elements are missing.');
+function requiredElement<T extends Element>(selector: string, type: { new (...args: never[]): T }): T {
+  const element = document.querySelector(selector);
+  if (!(element instanceof type)) throw new Error(`Required element missing: ${selector}`);
+  return element;
 }
+
+const canvas = requiredElement('#board', HTMLCanvasElement);
+const actionButton = requiredElement('#action', HTMLButtonElement);
+const restartButton = requiredElement('#restart', HTMLButtonElement);
+const scoreElement = requiredElement('#score', HTMLElement);
+const statusElement = requiredElement('#status', HTMLElement);
+const overlay = requiredElement('#overlay', HTMLElement);
+const overlayTitle = requiredElement('#overlay-title', HTMLElement);
+const overlayMessage = requiredElement('#overlay-message', HTMLElement);
 canvas.width = gridSize * cellSize;
 canvas.height = gridSize * cellSize;
-const context = canvas.getContext('2d');
-if (!context) throw new Error('A 2D drawing context is unavailable.');
+const drawingContext = canvas.getContext('2d');
+if (!drawingContext) throw new Error('A 2D drawing context is unavailable.');
+const context = drawingContext;
 
 let game = createGame();
 let clock = freshClock();
 
 function render(): void {
-  drawBoard(context!, game.snake, game.food);
-  scoreElement!.textContent = `Score: ${game.score}`;
-  actionButton!.textContent = game.phase === 'start' ? 'Start' :
-    game.phase === 'playing' ? 'Pause' : game.phase === 'gameOver' ? 'Finished' : 'Resume';
-  actionButton!.disabled = game.phase === 'gameOver';
-  statusElement!.textContent = game.phase === 'gameOver'
-    ? `${game.outcome === 'win' ? 'You filled the board — you win!' :
-      game.outcome === 'wall' ? 'Game over: hit a wall.' : 'Game over: hit your body.'} Final score: ${game.score}. Reload to play again.`
-    : game.phase === 'start' ? 'Ready. Select Start or press Enter.'
-    : game.phase === 'playing' ? 'Playing' : 'Paused';
+  drawBoard(context, game.snake, game.food);
+  const screen = screenFor(game);
+  scoreElement.textContent = `Score: ${game.score}`;
+  actionButton.textContent = screen.actionLabel;
+  actionButton.hidden = !screen.showAction;
+  restartButton.hidden = !screen.showRestart;
+  overlay.hidden = !screen.showOverlay;
+  overlayTitle.textContent = screen.title;
+  overlayMessage.textContent = screen.message;
+  const status = screen.title ? `${screen.title} ${screen.message}` : screen.message;
+  // Avoid repeating live-region announcements after every movement tick.
+  if (statusElement.textContent !== status) statusElement.textContent = status;
+  // A focused Start/Resume button becomes Pause; Space therefore pauses via
+  // native activation. At game over, move focus to the available Restart action.
+  if (actionButton.hidden && document.activeElement === actionButton) restartButton.focus();
 }
 
 function togglePlay(): void {
@@ -38,14 +51,24 @@ function togglePlay(): void {
   render();
 }
 
+function restartRun(): void {
+  const next = restart(game);
+  if (next === game) return;
+  game = next;
+  clock = freshClock();
+  render();
+  actionButton.focus();
+}
+
 actionButton.addEventListener('click', togglePlay);
+restartButton.addEventListener('click', restartRun);
 const keys: Record<string, Direction> = {
   ArrowUp: 'up', w: 'up', ArrowRight: 'right', d: 'right',
   ArrowDown: 'down', s: 'down', ArrowLeft: 'left', a: 'left',
 };
 window.addEventListener('keydown', (event) => {
   if (event.ctrlKey || event.metaKey || event.altKey) return;
-  // Keep native button keyboard activation; do not toggle twice.
+  // Buttons retain native Enter/Space activation without a second global action.
   if (event.target instanceof HTMLButtonElement &&
       (event.key === ' ' || event.key === 'Enter')) {
     if (event.repeat) event.preventDefault();
@@ -64,7 +87,6 @@ window.addEventListener('keydown', (event) => {
   }
 });
 
-// A backgrounded page should never accumulate movement time.
 function pauseForFocusLoss(): void {
   game = pause(game);
   clock = freshClock();

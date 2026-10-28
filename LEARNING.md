@@ -133,3 +133,31 @@ Manual checks for review:
 5. Reload to reset. Restart controls and finished-screen polish are milestone 4.
 
 Review exercise: why must food detection happen before deciding whether to exclude the tail from collision checks?
+
+
+## Milestone 4: finish version one
+
+AI implemented restart and interface polish under authorization to proceed. No commit or push has been made for this milestone.
+
+Decisions and concepts:
+
+- Restart is a guarded state transition: only paused/finished runs can reset. Reusing initial-state creation clears snake, score, outcome, direction, pending input, and food; the browser controller resets its separate timing clock.
+- Restart returns to the ready screen, requiring explicit Start. This avoids accidental movement immediately after resetting.
+- Screen wording and action visibility are derived from game state through `screenFor`, rather than maintained as a second independent state machine.
+- HTML overlays cover start/paused/finished states while retaining the Canvas board beneath a translucent layer. Controls remain below the board and use native buttons.
+- Finishing hides Pause and reveals Restart. If the hidden button held keyboard focus, focus moves to Restart; restarting then focuses Start.
+- The live status region updates only when its message changes, avoiding movement-tick announcements. The score is visible separately. This improves basic keyboard/status access but does not provide a nonvisual equivalent of the spatial game.
+- The DOM helper validates required element types once, removing non-null assertions from the controller.
+- Final styling keeps the simple version-one dark board; version-two artwork, avatar, speed settings, audio, and effects remain deferred.
+
+Verification performed:
+
+- `npm run check`: passed.
+- `npm test`: all 20 tests passed, including reset after pause/wall/self/win, prevention of active-run reset, and screen actions/messages for every phase.
+- `npm run build`: passed using Vite 8.3.5.
+- `git diff --check`: passed.
+- Starting a local server in the agent environment again failed with `listen EPERM` on 127.0.0.1:5174. Final browser checks remain pending; logic tests do not verify DOM interaction, CSS, focus, or actual animation timing.
+
+Use the final browser checklist in README.md for the remaining visual, keyboard, focus, resize, and production-preview checks. The previous user feedback confirmed the milestone-three game was playable, but does not constitute verification of the new milestone-four screens.
+
+Review exercise: why should restarting reset both game data and the timing clock, even though they are stored separately?

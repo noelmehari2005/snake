@@ -5,36 +5,36 @@
   color-scheme: dark;
 }
 
-body {
-  margin: 0;
-  padding: 2rem 1rem;
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; padding: 2rem 1rem; }
+main { max-width: 28rem; margin: auto; }
+p { line-height: 1.5; }
+h1 { margin: 0; font-size: 2.75rem; }
+.game-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; }
+.eyebrow { margin: 0; color: #a7b4c8; font-size: 0.8rem; }
+.score { font-weight: 600; white-space: nowrap; }
+.board-frame { position: relative; }
+canvas { display: block; width: 100%; height: auto; border: 1px solid #6b7280; }
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
+  background: rgb(3 7 18 / 78%);
+  pointer-events: none;
 }
-
-main {
-  max-width: 34rem;
-  margin: auto;
-}
-
-canvas {
-  box-sizing: border-box;
-  display: block;
-  width: 100%;
-  max-width: 400px;
-  height: auto;
-  border: 1px solid #6b7280;
-}
-
-p {
-  line-height: 1.5;
-}
-
-button {
-  font: inherit;
-  padding: 0.6rem 1.2rem;
-  cursor: pointer;
-}
-
-button:focus-visible {
-  outline: 3px solid #bbf7d0;
-  outline-offset: 3px;
-}
+.overlay h2 { margin: 0 0 0.5rem; font-size: clamp(1.25rem, 5vw, 2rem); }
+.overlay p { max-width: 25ch; margin: 0; }
+.controls { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem; }
+button { font: inherit; font-weight: 600; padding: 0.65rem 1.3rem; border: 1px solid #86efac; border-radius: 0.35rem; background: #bbf7d0; color: #052e16; cursor: pointer; }
+button:hover { background: #86efac; }
+#restart { background: transparent; color: #e5e7eb; border-color: #6b7280; }
+#restart:hover { background: #1f2937; }
+button:focus-visible { outline: 3px solid #fb923c; outline-offset: 3px; }
+.hint { color: #a7b4c8; font-size: 0.875rem; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }

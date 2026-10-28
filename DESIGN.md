@@ -1,6 +1,6 @@
 # Snake design plan
 
-Approved in discussion on October 27, 2026. Milestone 0 setup is implemented and its development preview is visually confirmed. Milestone 1 static grid and snake are implemented; type checking and build pass. Milestone 1 development appearance is confirmed by screenshot. Milestone 2 is committed. Milestone 3 food/growth/scoring/collisions/win rules are implemented; browser interaction verification remains pending.
+Approved in discussion on October 27, 2026. Milestone 0 setup is implemented and its development preview is visually confirmed. Milestone 1 static grid and snake are implemented; type checking and build pass. Milestone 1 development appearance is confirmed by screenshot. Milestone 2 is committed. Milestone 3 is committed. Milestone 4 restart controls, state overlays, and interface polish are implemented. All 20 tests, type checking, and production build pass; final browser verification remains pending.
 
 ## Goal and stack
 
@@ -125,4 +125,4 @@ Revisit visual references, asset choices, speed limits and change behavior, audi
 
 ## Milestone 2 intermediate behavior
 
-Milestone 2 temporarily paused at board edges. Milestone 3 replaces that guard with wall-loss behavior and adds self-collision checks. Reload remains the reset action until milestone 4 adds restart controls. Automatic focus-loss pause was implemented with timing/input because it prevents background time accumulation.
+Milestone 2 temporarily paused at board edges. Milestone 3 replaces that guard with wall-loss behavior and adds self-collision checks. Milestone 4 replaces reload-based reset with Restart while paused or finished, returning to the ready screen. Automatic focus-loss pause was implemented with timing/input because it prevents background time accumulation.

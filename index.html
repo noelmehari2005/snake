@@ -3,22 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A classic keyboard-controlled Snake game. Eat, grow, and fill the board." />
     <title>Snake</title>
     <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body>
     <main>
-      <h1>Snake</h1>
-      <p>Milestone 3: Food, growth, and collisions</p>
-      <p id="score">Score: 0</p>
-      <canvas id="board" width="400" height="400" aria-label="20 by 20 grid with a three-segment snake; the light green segment is the head">
-        This preview requires a browser with Canvas support.
-      </canvas>
-      <p>Arrow keys or WASD to turn. Space to pause or resume.</p>
-      <button id="action" type="button">Start</button>
-      <p id="status" role="status">Ready. Select Start or press Enter.</p>
-      <p>Eat orange food to grow. Avoid walls and your body. Reload to reset; restart controls arrive next.</p>
-      <noscript>Enable JavaScript to display the preview.</noscript>
+      <header class="game-header">
+        <div><p class="eyebrow">A classic arcade game</p><h1>Snake</h1></div>
+        <p id="score" class="score">Score: 0</p>
+      </header>
+      <div class="board-frame">
+        <canvas id="board" width="400" height="400" aria-label="Snake board. Light green is the head; orange circles are food." aria-describedby="instructions status">
+          This game requires Canvas support and keyboard controls.
+        </canvas>
+        <section id="overlay" class="overlay" aria-labelledby="overlay-title">
+          <h2 id="overlay-title">Ready to play?</h2>
+          <p id="overlay-message">Eat orange food. Avoid walls and your body.</p>
+        </section>
+      </div>
+      <div class="controls" aria-label="Game controls">
+        <button id="action" type="button">Start</button>
+        <button id="restart" type="button" hidden>Restart</button>
+      </div>
+      <p id="instructions">Arrow keys or WASD to turn. Enter to start. Space to pause or resume.</p>
+      <p class="hint">One point per food. Switching tabs pauses the game. Pause to restart.</p>
+      <p id="status" class="sr-only" role="status"></p>
+      <noscript>Enable JavaScript to play Snake.</noscript>
     </main>
     <script type="module" src="./src/main.ts"></script>
   </body>

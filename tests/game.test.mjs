@@ -141,3 +141,44 @@ test('finished runs cannot move, turn, pause, or resume', () => {
   assert.equal(pause(game), game);
   assert.equal(play(game), game);
 });
+
+test('restart restores all run data after pause, loss, or win and stays at start', async () => {
+  const { restart } = await import('../src/game.ts');
+  for (const [phase, outcome] of [['paused', null], ['gameOver', 'wall'], ['gameOver', 'self'], ['gameOver', 'win']]) {
+    const prior = { ...createGame(() => 0), phase, outcome, score: 12,
+      direction: 'down', pendingDirection: 'left', snake: [{ x: 5, y: 7 }], food: null };
+    const next = restart(prior, () => 0);
+    assert.deepEqual(next, createGame(() => 0));
+    assert.equal(next.phase, 'start');
+    assert.notEqual(next.snake, prior.snake);
+    assert.equal(step(next), next);
+  }
+});
+test('restart cannot discard a playing run or reroll the start board', async () => {
+  const { restart } = await import('../src/game.ts');
+  for (const game of [createGame(() => 0), play(createGame(() => 0))]) {
+    assert.equal(restart(game, () => { throw new Error('Unexpected restart'); }), game);
+  }
+});
+test('screen actions and messages match start, play, pause, loss, and win', async () => {
+  const { screenFor } = await import('../src/view.ts');
+  const ready = createGame(() => 0);
+  assert.equal(screenFor(ready).actionLabel, 'Start');
+  assert.equal(screenFor(ready).showRestart, false);
+  const active = screenFor(play(ready));
+  assert.equal(active.showOverlay, false);
+  assert.equal(active.showRestart, false);
+  assert.equal(active.actionLabel, 'Pause');
+  const paused = screenFor(pause(play(ready)));
+  assert.equal(paused.actionLabel, 'Resume');
+  assert.equal(paused.showRestart, true);
+  assert.equal(paused.showOverlay, true);
+  for (const outcome of ['wall', 'self', 'win']) {
+    const screen = screenFor({ ...ready, phase: 'gameOver', score: 8, outcome });
+    assert.equal(screen.showAction, false);
+    assert.equal(screen.showRestart, true);
+    assert.equal(screen.showOverlay, true);
+    assert.match(screen.message, /Final score: 8/);
+    assert.equal(screen.title, outcome === 'win' ? 'You win!' : 'Game over');
+  }
+});
