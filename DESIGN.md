@@ -1,0 +1,123 @@
+# Snake design plan
+
+Approved in discussion on October 27, 2026. Milestone 0 source files are prepared; dependency installation and browser verification are pending.
+
+## Goal and stack
+
+Build a browser-based Snake game for a portfolio, with an emphasis on understanding, maintainability, and explaining design decisions. Use TypeScript for logic, Canvas for drawing, and HTML/CSS for the interface. TypeScript compiles to browser JavaScript. Produce static files suitable for GitHub Pages.
+
+Each mini-game has its own repository under `Portfolio/MiniGames`. Snake uses the existing repository at `Portfolio/MiniGames/snake`. The sibling `Portfolio/noelmehari2005.github.io` repository contains the portfolio website, which will present the games. Decide how the website links to or embeds published games when preparing deployment. Do not initialize a replacement repository. Choose minimal build tooling after discussing its purpose. No backend or application framework is required for this scope.
+
+## Version one rules
+
+- Board: 20 by 20 cells. Start with three segments near the center, facing right.
+- Movement: one cell every 150 ms, with constant speed.
+- Controls: arrows or WASD. Reject immediate reversal; accept at most one valid turn per tick.
+- Food: one item on a randomly selected empty cell. Eating adds one segment and one point.
+- Crossing a wall or entering the body ends the run.
+- Entering the current tail cell is allowed when that tail leaves during the same tick.
+- Filling the board wins the run; do not attempt to generate more food.
+- Space or a button pauses/resumes. Automatically pause on window blur or hidden tab; resume requires an explicit action and a full tick interval before movement.
+- Restart is available while paused or finished and returns to the start screen. Reset snake, score, direction, pending input, and timing.
+- Ignore held-key repeats for start, pause, and restart.
+
+Keyboard only for version one. No obstacles, levels, saved high scores, or increasing difficulty.
+
+## Screen and states
+
+Use a simple dark board, distinct head/body/food colors, a square Canvas that scales to the window, and HTML controls.
+
+```text
+SNAKE                         Score: 0
++------------------------------------+
+|                                    |
+|           ###           *          |
+|                                    |
++------------------------------------+
+Arrow keys / WASD to move
+Space to pause                 [Pause]
+```
+
+| State | Behavior |
+| --- | --- |
+| Start | Initial board and instructions; Start or Enter begins |
+| Playing | Timed movement, direction input, pause |
+| Paused | Preserve board; Resume and Restart |
+| Game over | Freeze board; final score, loss/win message, Restart |
+
+Transitions: start -> playing; playing <-> paused; playing -> game over; restart from paused/game over -> start. A win is a finished outcome, rather than a separate active mode.
+
+## Representation and update order
+
+Separate game rules, Canvas rendering, and browser interaction/timing so rules can be tested without a browser.
+
+Store the snake as a head-first array of integer `{x, y}` coordinates. Use named direction values and explicit game states. An array is sufficient for this small board; explain alternatives only when useful.
+
+Each tick:
+
+1. Apply the accepted direction.
+2. Calculate the next head position.
+3. Determine whether it reaches food.
+4. Check walls and body, accounting for whether the tail moves.
+5. Update snake and score.
+6. Place food or declare a win.
+
+Use requestAnimationFrame with elapsed time for fixed movement intervals. Rendering frequency and movement speed are separate. Bound catch-up after stalls; specify the exact policy during the timing milestone.
+
+## Milestones and collaboration
+
+Before each milestone, explain its concepts and work through a manageable reasoning or implementation task. Review the reasoning and implementation before advancing. Do not build all milestones at once.
+
+| Milestone | Deliverable | Participation and verification |
+| --- | --- | --- |
+| 0: Plan/setup | Saved plan, minimal TypeScript setup, runnable page | Explain files and commands; build and open page without errors |
+| 1: Static board | Grid and initial snake | Practice grid-to-pixel conversion; verify positions and sizing |
+| 2: Movement/input | Timed movement, turning, start, pause | Reason through one tick; logic tests and keyboard checks |
+| 3: Complete rules | Food, growth, scoring, collisions, win | Predict edge cases; implement and test rules together |
+| 4: Finish | Restart, focus handling, polish, README | Playtest, full tests/build, browser checklist |
+
+## Verification plan
+
+Automated logic tests use controlled state and predictable randomness where needed. Add tests with the relevant milestone, not all in advance.
+
+| Case | Expected result |
+| --- | --- |
+| Move without food | Head advances one cell; length stays constant |
+| Valid turn | Direction changes at next tick |
+| Reverse input | Ignored |
+| Multiple turns in a tick | Only first valid turn applies |
+| Eat food | Length and score each increase by one |
+| Cross each of four edges | Run ends |
+| Enter body | Run ends |
+| Enter departing tail | Move succeeds |
+| Generate food | In bounds and outside snake |
+| One empty cell | Food placed in that cell |
+| Fill board | Win; no food generation |
+| Restart | Initial state restored, including pending input and timing |
+
+Manual browser checks:
+
+- Start, pause, resume, loss, win display, restart.
+- Arrows/WASD work; game controls do not scroll the page during play.
+- Focus loss pauses; returning does not automatically resume.
+- Paused/finished snake does not move; resume waits one full interval.
+- Layout remains readable and Canvas stays aligned at different sizes.
+
+Record actual commands, checks, outcomes, and remaining limitations. Planned tests are not completed tests.
+
+## Documentation and Git
+
+Keep this plan, a README with run/build/test/play instructions, and a short learning/collaboration log. Record CS concepts, meaningful decisions and tradeoffs, human contributions, AI assistance, and verification. Avoid documentation that simply repeats the code.
+
+Review diffs and use meaningful milestone commits. Never push without explicit authorization.
+
+## Version two backlog — do not implement in version one
+
+Requested October 27, 2026:
+
+- Visually appealing background.
+- Snake avatar/visual identity; agree on its appearance before implementation.
+- Player-adjustable tick interval (movement speed).
+- Sounds and visual effects.
+
+Revisit visual references, asset choices, speed limits and change behavior, audio controls, and effects during version two planning. These additions should preserve understandable game rules and testability.
