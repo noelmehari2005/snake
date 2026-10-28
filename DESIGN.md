@@ -1,6 +1,6 @@
 # Snake design plan
 
-Approved in discussion on October 27, 2026. Milestone 0 source files are prepared; dependencies are installed and type checking/build pass. The development preview is visually confirmed; console, resizing, and production-preview checks remain pending.
+Approved in discussion on October 27, 2026. Milestone 0 setup is implemented and its development preview is visually confirmed. Milestone 1 static grid and snake are implemented; type checking and build pass. Milestone 1 development appearance is confirmed by screenshot; console, resize, and production-preview checks remain pending.
 
 ## Goal and stack
 

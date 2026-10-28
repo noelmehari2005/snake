@@ -32,3 +32,34 @@ Browser checklist after installation:
 3. Confirm no browser console errors.
 4. Resize the window; the Canvas should remain square and fit the content width.
 5. Run `npm run preview` and repeat the page check against the production build.
+
+## Milestone 1: static board and snake
+
+AI implemented the approved static-board milestone at the user's request. The next review should connect the visible segments to their coordinate data before advancing to movement.
+
+Decisions and concepts:
+
+- `board.ts` defines a `Cell` type and a head-first array: (10, 10), (9, 10), (8, 10). With the head on the right, the initial snake faces right.
+- `render.ts` accepts coordinates rather than owning snake state. Changing the array changes the scene without changing the drawing algorithm.
+- `readonly` prevents accidental array mutation through the renderer's parameter. It is a TypeScript check, not a runtime freeze.
+- Each logical cell is 20 pixels. The board is 400 by 400 internal pixels; CSS scales its display while preserving its proportions.
+- Internal grid lines use a half-pixel offset for crisp one-pixel strokes at the native Canvas size. A small inset leaves segment boundaries visible. The head also has a lighter color.
+- Canvas uses border-box sizing so its border fits inside the available content width on narrow screens.
+- No game loop, input, food, or collision behavior has been added.
+
+Verification performed:
+
+- `npm run check`: passed.
+- `npm run build`: passed using Vite 8.3.5.
+- `git diff --check`: passed.
+- Browser attempt could not connect to a running server. Starting Vite in the agent environment failed with `listen EPERM` on 127.0.0.1:5173. Direct browser access remained unavailable. A subsequent user-provided screenshot confirms the development preview shows the square 20 by 20 grid, three aligned segments near the center, and a lighter rightmost head. Console, resize, stationary-over-time, and production-preview checks remain unconfirmed.
+
+Local browser checklist:
+
+1. Run `npm run dev` in the local terminal and open its URL.
+2. Confirm a 20 by 20 grid with three adjacent segments near the center; the rightmost segment should be lighter.
+3. Confirm the snake remains stationary and the browser console contains no errors.
+4. Resize to a narrow window; the board should remain square without horizontal overflow.
+5. Run `npm run preview` and confirm the production build displays the same scene.
+
+Review exercise: the head is at (10, 10). Multiplying by the 20-pixel cell size locates the cell at (200, 200); the 2-pixel drawing inset places the visible square at (202, 202). How would changing only the head's x coordinate to 11 affect the scene?
