@@ -1,5 +1,5 @@
 const canvas = document.querySelector('#board');
-const status = document.querySelector('#status');
+const statusElement = document.querySelector('#status');
 
 // Narrow the DOM type before using Canvas-specific methods.
 if (!(canvas instanceof HTMLCanvasElement)) {
@@ -19,6 +19,6 @@ const cellSize = 20;
 context.fillStyle = '#4ade80';
 context.fillRect(3 * cellSize, 5 * cellSize, cellSize, cellSize);
 
-if (status) {
-  status.textContent = 'TypeScript is running: one square drawn at grid cell (3, 5).';
+if (statusElement) {
+  statusElement.textContent = 'TypeScript is running: one square drawn at grid cell (3, 5).';
 }

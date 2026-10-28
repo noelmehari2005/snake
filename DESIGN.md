@@ -1,6 +1,6 @@
 # Snake design plan
 
-Approved in discussion on October 27, 2026. Milestone 0 source files are prepared; dependency installation and browser verification are pending.
+Approved in discussion on October 27, 2026. Milestone 0 source files are prepared; dependencies are installed and type checking/build pass. The development preview is visually confirmed; console, resizing, and production-preview checks remain pending.
 
 ## Goal and stack
 
