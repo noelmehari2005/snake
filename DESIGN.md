@@ -1,6 +1,6 @@
 # Snake design plan
 
-Approved in discussion on October 27, 2026. Milestone 0 setup is implemented and its development preview is visually confirmed. Milestone 1 static grid and snake are implemented; type checking and build pass. Milestone 1 development appearance is confirmed by screenshot; console, resize, and production-preview checks remain pending.
+Approved in discussion on October 27, 2026. Milestone 0 setup is implemented and its development preview is visually confirmed. Milestone 1 static grid and snake are implemented; type checking and build pass. Milestone 1 development appearance is confirmed by screenshot. Milestone 2 movement/input is implemented with passing logic tests, type checking, and build; browser verification remains pending.
 
 ## Goal and stack
 
@@ -62,7 +62,7 @@ Each tick:
 5. Update snake and score.
 6. Place food or declare a win.
 
-Use requestAnimationFrame with elapsed time for fixed movement intervals. Rendering frequency and movement speed are separate. Bound catch-up after stalls; specify the exact policy during the timing milestone.
+Use requestAnimationFrame with elapsed time for fixed movement intervals. Rendering frequency and movement speed are separate. Allow at most one move per animation frame and retain only the fractional interval remainder, discarding backlog after stalls. Reset the timing clock on start, pause, and resume.
 
 ## Milestones and collaboration
 
@@ -121,3 +121,8 @@ Requested October 27, 2026:
 - Sounds and visual effects.
 
 Revisit visual references, asset choices, speed limits and change behavior, audio controls, and effects during version two planning. These additions should preserve understandable game rules and testability.
+
+
+## Milestone 2 intermediate behavior
+
+Until milestone 3 adds wall loss, attempting to leave the board pauses without moving the snake. Resume and turn before the next tick to move away, or reload to reset. This temporary guard preserves visibility without introducing wrapping. Self-collisions are not checked yet. Automatic focus-loss pause was implemented with timing/input because it prevents background time accumulation.

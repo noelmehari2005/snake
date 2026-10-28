@@ -3,17 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Snake — Static Board</title>
+    <title>Snake — Movement Preview</title>
     <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body>
     <main>
       <h1>Snake</h1>
-      <p>Milestone 1: Board and initial snake</p>
-      <canvas id="board" width="400" height="400" aria-label="20 by 20 grid with a stationary three-segment snake near the center, facing right">
+      <p>Milestone 2: Movement and controls</p>
+      <canvas id="board" width="400" height="400" aria-label="20 by 20 grid with a three-segment snake; the light green segment is the head">
         This preview requires a browser with Canvas support.
       </canvas>
-      <p>The light green square is the head. Movement arrives in the next milestone.</p>
+      <p>Arrow keys or WASD to turn. Space to pause or resume.</p>
+      <button id="action" type="button">Start</button>
+      <p id="status" role="status">Ready. Select Start or press Enter.</p>
+      <p>Movement preview: pauses at walls. Food and collisions arrive next.</p>
       <noscript>Enable JavaScript to display the preview.</noscript>
     </main>
     <script type="module" src="./src/main.ts"></script>

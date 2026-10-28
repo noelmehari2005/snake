@@ -63,3 +63,38 @@ Local browser checklist:
 5. Run `npm run preview` and confirm the production build displays the same scene.
 
 Review exercise: the head is at (10, 10). Multiplying by the 20-pixel cell size locates the cell at (200, 200); the 2-pixel drawing inset places the visible square at (202, 202). How would changing only the head's x coordinate to 11 affect the scene?
+
+
+## Milestone 2: movement, input, and timing
+
+AI implemented this milestone following authorization to proceed. No commit or push is included in that authorization; review remains a separate checkpoint.
+
+Concepts and decisions:
+
+- One movement step creates a new head and keeps all previous segments except the tail. The previous state remains unchanged, making tests and reasoning simpler.
+- A direction union limits valid direction values. A vector lookup maps each direction to a one-cell displacement.
+- Keyboard events request a turn; the timed step applies it. Reverse and same-direction requests do not consume the one valid turn allowed per tick. Repeated held keys are ignored.
+- Pure game and timing functions are separate from DOM events and Canvas, allowing Node's built-in test runner to verify them without browser automation or new dependencies.
+- The animation loop uses elapsed time, with a 150 ms movement interval independent of display frame rate. At most one move occurs per frame, and only fractional time is retained after a stalled frame.
+- Starting/resuming creates a fresh clock, so movement waits at least a full interval. Pausing clears pending input. Focus loss pauses and clears timing; returning does not resume.
+- Native button Enter/Space activation is preserved without also running the global toggle handler.
+- A temporary edge guard pauses before leaving the board. Wall-loss and self-collision rules remain milestone 3 work. Reload is the temporary reset action.
+
+Verification:
+
+- `npm run check`: passed.
+- `npm test`: all 9 tests passed (inactive states, movement/body shift, four directions, reversal, turn queue, pause, four edges, resume delay, stall backlog).
+- `npm run build`: passed.
+- Browser interaction is not verified by automated logic tests. Local manual checks remain pending.
+
+Manual checklist:
+
+1. Start with Enter or the button; verify the snake waits briefly then moves right.
+2. Try arrows and WASD (including uppercase letters), opposite-direction input, and rapid successive turns.
+3. Pause/resume with Space and the button. Confirm the snake stays still while paused and waits a full interval after resume.
+4. Verify keyboard activation of the focused button toggles once and game keys do not scroll during play.
+5. Switch tabs/windows: confirm it pauses and stays paused on return.
+6. Reach each edge: confirm the temporary pause keeps the snake visible. Resume and turn to move away; reload resets.
+7. Check the console, narrow-window layout, and production preview.
+
+Review exercise: after moving right from [(10,10), (9,10), (8,10)], the new array is [(11,10), (10,10), (9,10)]. Why does adding a head without removing the tail produce growth instead?

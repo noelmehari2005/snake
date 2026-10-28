@@ -4,7 +4,9 @@ A browser-based Snake project exploring game loops, data structures, and collisi
 
 ## Current milestone
 
-Milestone 1 draws a 20 × 20 grid and a stationary three-segment snake near the center, facing right. The head uses a lighter color. Gameplay has not been implemented. See [DESIGN.md](DESIGN.md) for the approved scope and version-two backlog.
+Milestone 2 adds movement every 150 ms, arrow/WASD turns, and Start/Pause/Resume. Press Enter to start and Space to pause or resume. Switching tabs or windows automatically pauses; resuming is explicit.
+
+This is an intermediate movement preview: reaching a wall pauses the snake rather than ending a run. Resume and turn before the next tick to move away, or reload to reset. Food, scoring, self-collisions, and wall-loss behavior arrive in milestone 3. See [DESIGN.md](DESIGN.md) for the complete scope.
 
 ## Run locally
 
@@ -19,6 +21,7 @@ Open the local URL printed by Vite. Use Ctrl+C to stop the server.
 
 ```sh
 npm run check
+npm test
 npm run build
 npm run preview
 ```
@@ -31,7 +34,10 @@ The committed `package-lock.json` locks dependency versions. Use `npm ci` for a 
 
 - `index.html`: page structure and Canvas element.
 - `src/style.css`: basic readable layout and responsive Canvas sizing.
-- `src/main.ts`: connects the Canvas to the drawing function.
+- `src/main.ts`: connects browser controls, focus events, animation timing, and rendering.
+- `src/game.ts`: state transitions, queued direction, and one movement step.
+- `src/timing.ts`: fixed-interval timing without browser dependencies.
+- `tests/game.test.mjs`: Node built-in tests for movement and timing.
 - `src/board.ts`: grid dimensions, coordinate type, and initial head-first snake data.
 - `src/render.ts`: draws the background, grid, and snake from coordinates.
 - `tsconfig.json`: strict TypeScript checking, including browser DOM types.
@@ -41,4 +47,4 @@ Vite handles the local server and production build without an application framew
 
 ## Verification
 
-See [LEARNING.md](LEARNING.md) for checks actually performed. Automated game-rule tests will be introduced with the relevant gameplay milestones.
+See [LEARNING.md](LEARNING.md) for checks actually performed. Run `npm test` for automated movement and timing tests. Node strips TypeScript syntax for these tests; `npm run check` performs the separate type check.
