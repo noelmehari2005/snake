@@ -77,3 +77,28 @@ See [LEARNING.md](LEARNING.md) for checks actually performed. Run `npm test` for
 - Check narrow and wide windows, console errors, and the production build with `npm run preview`.
 
 The full-board win is covered by a deterministic automated fixture; a manual full-board run has not been claimed.
+
+
+## Browser interaction tests
+
+Five Playwright tests exercise the actual page in Chromium: Start and food/score rendering, keyboard pause/resume, restart from pause, wall loss and restart, and narrow-window layout. Every case also checks for browser runtime/console errors.
+
+One-time setup on a new machine:
+
+```sh
+npm install --save-dev --save-exact @playwright/test@1.64.1
+npx playwright install chromium
+```
+
+The test runner is recorded in package.json and package-lock.json. Clean dependency installs can use `npm ci`. Browser installation is a separate one-time download on each machine.
+
+```sh
+npm run test:browser
+npm run test:browser:headed
+```
+
+Playwright builds the app and starts its production preview on port 4173, then stops it when the suite finishes. Keep port 4173 free; the normal development server can stay on 5173. Failure screenshots and traces are written under ignored `test-results/`.
+
+The tests control the browser clock and food randomness for repeatability. They compare Canvas contents before/after actions rather than storing pixel-perfect screenshot baselines. These checks validate actual browser wiring, movement visibility, score text, overlays, buttons, and reset behavior, but do not replace aesthetic review or cover every game rule in-browser. Existing Node tests retain coverage of self-collision and full-board wins. This initial suite uses Chromium only; Firefox and WebKit are not yet tested.
+
+The first local Chromium run exposed a focus-transfer bug in the wall-loss test. After fixing focus capture before hiding Pause, the user-provided rerun confirms all five Chromium tests passed (5.5 seconds).

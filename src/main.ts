@@ -30,6 +30,8 @@ let clock = freshClock();
 function render(): void {
   drawBoard(context, game.snake, game.food);
   const screen = screenFor(game);
+  // Hiding a focused element can synchronously move focus to the document body.
+  const actionHadFocus = document.activeElement === actionButton;
   scoreElement.textContent = `Score: ${game.score}`;
   actionButton.textContent = screen.actionLabel;
   actionButton.hidden = !screen.showAction;
@@ -42,7 +44,7 @@ function render(): void {
   if (statusElement.textContent !== status) statusElement.textContent = status;
   // A focused Start/Resume button becomes Pause; Space therefore pauses via
   // native activation. At game over, move focus to the available Restart action.
-  if (actionButton.hidden && document.activeElement === actionButton) restartButton.focus();
+  if (actionButton.hidden && actionHadFocus) restartButton.focus();
 }
 
 function togglePlay(): void {
