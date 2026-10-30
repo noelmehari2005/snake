@@ -114,7 +114,7 @@ A changed speed discards the partial movement interval and waits one full interv
 Current verification: all 26 Node tests, type checking, and production build pass. User-provided local terminal output confirms all eight Chromium browser tests passed in 6.8 seconds, including speed thresholds, live changes, paused changes, restart persistence, and refresh defaults.
 
 
-## Version two: visual pass (review pending)
+## Version two: visual pass 
 
 The renderer draws a simplified Orochimaru-style white serpent with golden eyes, purple markings and scale details, a small forked tongue, and a tapered tail. Only adjacent entries in the ordered snake array are connected, so nearby parallel body sections do not merge. The head rotates using the actual movement direction. Presentation does not change grid positions or collision rules.
 
@@ -135,7 +135,7 @@ Revised-pass verification: 26 Node tests, type checking, build, and whitespace c
 The latest background refinement uses a midnight navy-purple sky, a pale moon with crimson glow, and flowing red clouds with light curled outlines based on the supplied visual references. The visible character name is Orochimaru. These are authored CSS/SVG decorations, with gameplay unchanged. Build/type checks pass. The user approved the final appearance and supplied a local Chromium rerun with all eight browser tests passing in 7.6 seconds.
 
 
-## Version two: sounds and effects (review pending)
+## Version two: sounds and effects 
 
 Sound starts off. Use **Sound: off/on** to opt in or mute at any time. The preference survives restart and resets on refresh. Audio is generated locally with Web Audio: a short rising eating cue, lower loss cue, and three-note win cue. No music, external sound files, or extra dependencies are added. If audio is unavailable or blocked, sound stays off and the game remains playable.
 
