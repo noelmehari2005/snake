@@ -4,7 +4,7 @@ A browser-based Snake project exploring game loops, data structures, and collisi
 
 ## Version one
 
-A 20 × 20 board, three-segment starting snake, food, growth, scoring, wall/self-collisions, and a full-board win. The movement interval is fixed at 150 ms. Each food adds one segment and one point.
+A 20 × 20 board, three-segment starting snake, food, growth, scoring, wall/self-collisions, and a full-board win. Normal uses a 150 ms movement interval. Version two adds live Slow (220 ms), Normal (150 ms), and Fast (100 ms) settings. Each food adds one segment and one point.
 
 | Action | Control |
 | --- | --- |
@@ -17,7 +17,7 @@ Restart returns to the ready screen; press Start to begin a fresh run. Switching
 
 The light green segment is the head and orange circles are food. Finished screens preserve the board and show the final score. The game requires a keyboard; the board adapts to narrow windows, but touch controls and a screen-reader equivalent for spatial gameplay are not implemented.
 
-See [DESIGN.md](DESIGN.md) for decisions and scope, and [LEARNING.md](LEARNING.md) for concepts, collaboration, and verification. Version-two backgrounds, snake avatar, adjustable speed, sounds, and effects remain deferred.
+See [DESIGN.md](DESIGN.md) for decisions and scope, and [LEARNING.md](LEARNING.md) for concepts, collaboration, and verification. Version-two speed controls are implemented for review. The moonlit garden, white-serpent avatar, sounds, and effects remain deferred.
 
 ## Run locally
 
@@ -48,6 +48,7 @@ The committed `package-lock.json` locks dependency versions. Use `npm ci` for a 
 - `src/main.ts`: connects browser controls, focus events, animation timing, and rendering.
 - `src/game.ts`: state transitions, food selection, scoring, collisions, and one movement step.
 - `src/view.ts`: maps game states to screen messages and available actions.
+- `src/settings.ts`: speed presets and validation.
 - `src/timing.ts`: fixed-interval timing without browser dependencies.
 - `tests/game.test.mjs`: Node built-in tests for game rules and timing.
 - `src/board.ts`: grid dimensions, coordinate type, and initial head-first snake data.
@@ -81,7 +82,7 @@ The full-board win is covered by a deterministic automated fixture; a manual ful
 
 ## Browser interaction tests
 
-Five Playwright tests exercise the actual page in Chromium: Start and food/score rendering, keyboard pause/resume, restart from pause, wall loss and restart, and narrow-window layout. Every case also checks for browser runtime/console errors.
+Eight Playwright tests exercise the actual page in Chromium: Start and food/score rendering, keyboard pause/resume, restart from pause, wall loss and restart, and narrow-window layout, plus speed intervals, live changes, and setting persistence. Every case also checks for browser runtime/console errors.
 
 One-time setup on a new machine:
 
@@ -102,3 +103,12 @@ Playwright builds the app and starts its production preview on port 4173, then s
 The tests control the browser clock and food randomness for repeatability. They compare Canvas contents before/after actions rather than storing pixel-perfect screenshot baselines. These checks validate actual browser wiring, movement visibility, score text, overlays, buttons, and reset behavior, but do not replace aesthetic review or cover every game rule in-browser. Existing Node tests retain coverage of self-collision and full-board wins. This initial suite uses Chromium only; Firefox and WebKit are not yet tested.
 
 The first local Chromium run exposed a focus-transfer bug in the wall-loss test. After fixing focus capture before hiding Pause, the user-provided rerun confirms all five Chromium tests passed (5.5 seconds).
+
+
+## Version two: speed settings
+
+Choose Slow (220 ms), Normal (150 ms), or Fast (100 ms) using the always-available buttons. Choices can change during play without pausing; the selected button is marked visually and with `aria-pressed`. Arrow/WASD controls continue to work while a speed button is focused. Enter/Space activates a focused button normally; use Pause/Resume or move focus away from the speed buttons to use Space as a pause shortcut.
+
+A changed speed discards the partial movement interval and waits one full interval at the new speed, measured from the change. The full-interval reset was tried and approved in review. Selecting the same speed does not reset timing. Board, score, direction, and queued input are preserved. Paused games stay paused; restarting preserves the selected speed. Reloading restores Normal. Score remains one point per food at every speed.
+
+Current verification: all 26 Node tests, type checking, and production build pass. User-provided local terminal output confirms all eight Chromium browser tests passed in 6.8 seconds, including speed thresholds, live changes, paused changes, restart persistence, and refresh defaults.

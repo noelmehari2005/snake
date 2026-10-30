@@ -3,12 +3,17 @@ import { drawBoard } from './render';
 import { createGame, pause, play, requestTurn, restart, step, type Direction } from './game';
 import { advanceClock, freshClock } from './timing';
 import { screenFor } from './view';
+import { defaultSpeed, isSpeed, speeds, type Speed } from './settings';
 
 function requiredElement<T extends Element>(selector: string, type: { new (...args: never[]): T }): T {
   const element = document.querySelector(selector);
   if (!(element instanceof type)) throw new Error(`Required element missing: ${selector}`);
   return element;
 }
+
+const speedControls = requiredElement('#speed-controls', HTMLElement);
+const speedDescription = requiredElement('#speed-description', HTMLElement);
+const speedButtons = speedControls.querySelectorAll<HTMLButtonElement>('button[data-speed]');
 
 const canvas = requiredElement('#board', HTMLCanvasElement);
 const actionButton = requiredElement('#action', HTMLButtonElement);
@@ -24,6 +29,8 @@ const drawingContext = canvas.getContext('2d');
 if (!drawingContext) throw new Error('A 2D drawing context is unavailable.');
 const context = drawingContext;
 
+// Preferences belong to the session, not the run: restarting preserves them.
+let speed: Speed = defaultSpeed;
 let game = createGame();
 let clock = freshClock();
 
@@ -61,6 +68,24 @@ function restartRun(): void {
   render();
   actionButton.focus();
 }
+
+function renderSpeed(): void {
+  speedButtons.forEach((button) => {
+    button.setAttribute('aria-pressed', String(button.dataset.speed === speed));
+  });
+  speedDescription.textContent = `${speeds[speed].label}: one move every ${speeds[speed].interval} ms`;
+}
+
+speedButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    const nextSpeed = button.dataset.speed;
+    if (!isSpeed(nextSpeed) || nextSpeed === speed) return;
+    speed = nextSpeed;
+    // Trial behavior: reset progress without changing game phase or pending input.
+    clock = freshClock(performance.now());
+    renderSpeed();
+  });
+});
 
 actionButton.addEventListener('click', togglePlay);
 restartButton.addEventListener('click', restartRun);
@@ -101,7 +126,7 @@ document.addEventListener('visibilitychange', () => {
 
 function frame(now: number): void {
   if (game.phase === 'playing') {
-    const result = advanceClock(clock, now);
+    const result = advanceClock(clock, now, speeds[speed].interval);
     clock = result.clock;
     if (result.shouldStep) {
       game = step(game);
@@ -111,5 +136,6 @@ function frame(now: number): void {
   }
   requestAnimationFrame(frame);
 }
+renderSpeed();
 render();
 requestAnimationFrame(frame);

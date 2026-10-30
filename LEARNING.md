@@ -105,3 +105,20 @@ The first local Chromium run passed four tests and exposed a focus-transfer bug 
 
 
 Browser rerun result: user-provided local terminal output confirms all five Chromium tests passed in 5.5 seconds after the focus fix. This verifies the tested production-page interactions and narrow layout, alongside the 20 passing Node tests, TypeScript check, and production build. Firefox/WebKit, aesthetic review, and a manual full-board win are outside this browser suite's coverage.
+
+
+## Version two, milestone 1: live speed selection
+
+The discussion approved Slow/Normal/Fast presets, revised the initial paused-only proposal to allow changes while playing, and selected clock reset as a trial. The user specifically requested revisiting that choice before commit. No commit or push has been made.
+
+- Speed is session configuration, separate from game state. Restart recreates run data while retaining the preference. Refresh reinitializes it to Normal.
+- `settings.ts` centralizes labels/intervals and validates button values. `advanceClock` accepts the selected interval while retaining the version-one default for existing callers.
+- On an actual preference change, `freshClock(performance.now())` starts a complete new interval at the event time. The playing/paused state and pending turn are untouched. Re-selecting the active speed is a no-op.
+- Native buttons avoid a select popup interrupting focus; their pressed state communicates the active selection. Enter/Space keeps native button activation; direction keys still reach the game while a speed button is focused.
+- Node tests cover default/name validation, each threshold, switching faster/slower with reset, and stall handling. Browser tests additionally check visible movement, preserved pending turn, unchanged playing/paused state, restart persistence, and refresh defaults.
+- Verification: `npm run check`, all 26 Node tests, `npm run build`, and `git diff --check` pass. `npm run test:browser` could not start its production preview because binding 127.0.0.1:4173 failed with EPERM. All eight browser cases require a local rerun; prior five-test success does not verify the new changes.
+
+Review before commit: try changing speed mid-run and decide whether the full-interval reset feels acceptable or whether fractional progress should carry over. Also try pausing, switching speed, resuming, and restarting. The added browser test reads the current head color to verify a preserved turn; revisit that rendering assertion when implementing the avatar.
+
+
+Speed milestone review outcome: the user tried live speed changes and approved retaining the full-interval clock reset. A subsequent user-provided terminal run confirms all eight Chromium browser tests passed in 6.8 seconds. Combined with 26 passing Node tests, type checking, and the production build, the speed-settings checkpoint is verified within the documented coverage. Commit/push authorization remains separate; nothing has been committed or pushed for this milestone.

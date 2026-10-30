@@ -99,3 +99,68 @@ test('320-pixel viewport has no horizontal overflow and keeps controls visible',
   await page.getByRole('button', { name: 'Pause', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Restart', exact: true })).toBeInViewport();
 });
+
+test('all three speeds control visible movement before starting', async ({ page }) => {
+  for (const [label, before, after] of [['Slow', 200, 70], ['Normal', 130, 70], ['Fast', 80, 70]]) {
+    // Each reload restores defaults; browser clock remains under test control.
+    await page.reload();
+    await page.getByRole('button', { name: label, exact: true }).click();
+    await expect(page.getByRole('button', { name: label, exact: true })).toHaveAttribute('aria-pressed', 'true');
+    const initial = await boardImage(page);
+    await page.getByRole('button', { name: 'Start', exact: true }).click();
+    await page.clock.runFor(before);
+    expect(await boardImage(page)).toBe(initial);
+    await page.clock.runFor(after);
+    expect(await boardImage(page)).not.toBe(initial);
+  }
+});
+
+test('live speed changes stay playing, preserve a queued turn, and reset partial progress', async ({ page }) => {
+  await page.getByRole('button', { name: 'Start', exact: true }).click();
+  await page.clock.runFor(200);
+  await expect(page.locator('#score')).toHaveText('Score: 1');
+  await page.keyboard.press('ArrowUp');
+  const prior = await boardImage(page);
+  await page.getByRole('button', { name: 'Fast', exact: true }).click();
+  await expect(page.locator('#overlay')).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Pause', exact: true })).toBeVisible();
+  await expect(page.locator('#score')).toHaveText('Score: 1');
+  expect(await boardImage(page)).toBe(prior);
+  await page.clock.runFor(80);
+  expect(await boardImage(page)).toBe(prior);
+  await page.clock.runFor(70);
+  expect(await boardImage(page)).not.toBe(prior);
+  // The queued up-turn survives: head is now at (11, 9), rather than (12, 10).
+  const headColor = await page.locator('#board').evaluate((canvas) =>
+    Array.from(canvas.getContext('2d').getImageData(230, 190, 1, 1).data));
+  expect(headColor).toEqual([187, 247, 208, 255]);
+  const moved = await boardImage(page);
+  await page.getByRole('button', { name: 'Slow', exact: true }).click();
+  await expect(page.locator('#overlay')).toBeHidden();
+  await page.clock.runFor(200);
+  expect(await boardImage(page)).toBe(moved);
+  await page.clock.runFor(70);
+  expect(await boardImage(page)).not.toBe(moved);
+});
+
+test('paused speed changes keep the board paused and survive restart; reload restores Normal', async ({ page }) => {
+  await page.getByRole('button', { name: 'Start', exact: true }).click();
+  await page.clock.runFor(200);
+  await page.getByRole('button', { name: 'Pause', exact: true }).click();
+  const paused = await boardImage(page);
+  await page.getByRole('button', { name: 'Slow', exact: true }).click();
+  await page.clock.runFor(600);
+  expect(await boardImage(page)).toBe(paused);
+  await expect(page.getByRole('heading', { name: 'Paused', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Resume', exact: true }).click();
+  await page.clock.runFor(200);
+  expect(await boardImage(page)).toBe(paused);
+  await page.clock.runFor(70);
+  expect(await boardImage(page)).not.toBe(paused);
+  await page.getByRole('button', { name: 'Pause', exact: true }).click();
+  await page.getByRole('button', { name: 'Restart', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Slow', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#score')).toHaveText('Score: 0');
+  await page.reload();
+  await expect(page.getByRole('button', { name: 'Normal', exact: true })).toHaveAttribute('aria-pressed', 'true');
+});

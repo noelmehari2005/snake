@@ -126,3 +126,17 @@ Revisit visual references, asset choices, speed limits and change behavior, audi
 ## Milestone 2 intermediate behavior
 
 Milestone 2 temporarily paused at board edges. Milestone 3 replaces that guard with wall-loss behavior and adds self-collision checks. Milestone 4 replaces reload-based reset with Restart while paused or finished, returning to the ready screen. Automatic focus-loss pause was implemented with timing/input because it prevents background time accumulation.
+
+
+## Version two agreed plan
+
+1. Speed controls: Slow 220 ms, Normal 150 ms (default), Fast 100 ms. Allow live changes without pausing, also available while paused or at the ready/finished screens. Preserve settings across restart; reload restores defaults. Score is one point per food at all speeds.
+2. Visual identity: a simplified Orochimaru-style white serpent with ivory connected segments, golden eyes, purple markings, forked tongue, and tapered tail. A muted moonlit garden surrounds a subtle board. Details rotate with movement and do not change occupied-cell collision rules. Review the first visual pass before finalizing.
+3. Sounds/effects: short eating/loss/win cues, a visible sound toggle initially off, and subtle eating/finish feedback. No initial background music. Respect reduced motion; effects do not block controls. Sound preference survives restart and resets on refresh.
+4. Re-run rule/browser tests, type checking, build, visual/audio review, and update documentation. Commits and pushes require separate approval.
+
+### Speed timing trial and review gate
+
+On a changed speed, reset accumulated movement progress and wait a full interval at the new speed, without changing phase, board, score, direction, or queued turn. Selecting the same speed leaves timing alone. The alternative is preserving fractional interval progress. This choice was raised again after implementation. The user tried it and approved live changes with the full-interval reset; that timing review is complete. Commit authorization remains separate.
+
+Speed milestone implementation: UI and timing integration are prepared; 26 logic tests, type checking, and build pass. The user-provided local rerun confirms all eight Chromium browser tests passed in 6.8 seconds. Artwork/audio/effects have not been implemented.

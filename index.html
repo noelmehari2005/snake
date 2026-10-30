@@ -26,6 +26,16 @@
         <button id="action" type="button">Start</button>
         <button id="restart" type="button" hidden>Restart</button>
       </div>
+      <section class="speed-settings" aria-labelledby="speed-title">
+        <h2 id="speed-title">Movement speed</h2>
+        <div id="speed-controls" class="speed-options" role="group" aria-labelledby="speed-title" aria-describedby="speed-description">
+          <button type="button" data-speed="slow" aria-pressed="false">Slow</button>
+          <button type="button" data-speed="normal" aria-pressed="true">Normal</button>
+          <button type="button" data-speed="fast" aria-pressed="false">Fast</button>
+        </div>
+        <p id="speed-description" class="hint" role="status">Normal: one move every 150 ms</p>
+        <p class="hint">Change speed anytime. A change resets the wait until the next move.</p>
+      </section>
       <p id="instructions">Arrow keys or WASD to turn. Enter to start. Space to pause or resume.</p>
       <p class="hint">One point per food. Switching tabs pauses the game. Pause to restart.</p>
       <p id="status" class="sr-only" role="status"></p>
