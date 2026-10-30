@@ -1,3 +1,6 @@
+import { GameAudio } from './audio';
+import { GameEffects } from './effects';
+import { feedbackFor } from './feedback';
 import { cellSize, gridSize } from './board';
 import { drawBoard } from './render';
 import { createGame, pause, play, requestTurn, restart, step, type Direction } from './game';
@@ -14,6 +17,22 @@ function requiredElement<T extends Element>(selector: string, type: { new (...ar
 const speedControls = requiredElement('#speed-controls', HTMLElement);
 const speedDescription = requiredElement('#speed-description', HTMLElement);
 const speedButtons = speedControls.querySelectorAll<HTMLButtonElement>('button[data-speed]');
+
+const soundButton = requiredElement('#sound', HTMLButtonElement);
+const soundStatus = requiredElement('#sound-status', HTMLElement);
+const audio = new GameAudio();
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const effects = new GameEffects(requiredElement('#effects', HTMLElement), () => reducedMotion.matches);
+reducedMotion.addEventListener('change', () => effects.clear());
+soundButton.addEventListener('click', async () => {
+  soundButton.disabled = true;
+  const requested = !audio.enabled;
+  const enabled = await audio.setEnabled(requested);
+  soundButton.textContent = `Sound: ${enabled ? 'on' : 'off'}`;
+  soundButton.setAttribute('aria-pressed', String(enabled));
+  soundStatus.textContent = requested && !enabled ? 'Audio unavailable. The game remains playable without sound.' : '';
+  soundButton.disabled = false;
+});
 
 const canvas = requiredElement('#board', HTMLCanvasElement);
 const actionButton = requiredElement('#action', HTMLButtonElement);
@@ -63,6 +82,8 @@ function render(): void {
 function togglePlay(): void {
   game = game.phase === 'playing' ? pause(game) : play(game);
   clock = freshClock();
+  effects.clear();
+  audio.stop();
   render();
 }
 
@@ -71,6 +92,8 @@ function restartRun(): void {
   if (next === game) return;
   game = next;
   clock = freshClock();
+  effects.clear();
+  audio.stop();
   render();
   actionButton.focus();
 }
@@ -123,6 +146,8 @@ window.addEventListener('keydown', (event) => {
 function pauseForFocusLoss(): void {
   game = pause(game);
   clock = freshClock();
+  effects.clear();
+  audio.stop();
   render();
 }
 window.addEventListener('blur', pauseForFocusLoss);
@@ -131,11 +156,18 @@ document.addEventListener('visibilitychange', () => {
 });
 
 function frame(now: number): void {
+  effects.update(now);
   if (game.phase === 'playing') {
     const result = advanceClock(clock, now, speeds[speed].interval);
     clock = result.clock;
     if (result.shouldStep) {
+      const before = game;
       game = step(game);
+      const feedback = feedbackFor(before, game);
+      if (feedback) {
+        audio.play(feedback);
+        effects.show(feedback, game.snake[0], now);
+      }
       if (game.phase !== 'playing') clock = freshClock();
       render();
     }

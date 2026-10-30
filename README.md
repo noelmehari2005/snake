@@ -133,3 +133,17 @@ Revised-pass verification: 26 Node tests, type checking, build, and whitespace c
 
 
 The latest background refinement uses a midnight navy-purple sky, a pale moon with crimson glow, and flowing red clouds with light curled outlines based on the supplied visual references. The visible character name is Orochimaru. These are authored CSS/SVG decorations, with gameplay unchanged. Build/type checks pass. The user approved the final appearance and supplied a local Chromium rerun with all eight browser tests passing in 7.6 seconds.
+
+
+## Version two: sounds and effects (review pending)
+
+Sound starts off. Use **Sound: off/on** to opt in or mute at any time. The preference survives restart and resets on refresh. Audio is generated locally with Web Audio: a short rising eating cue, lower loss cue, and three-note win cue. No music, external sound files, or extra dependencies are added. If audio is unavailable or blocked, sound stays off and the game remains playable.
+
+Eating produces a small particle burst and a very brief head pulse; finishing gives the board a soft border glow. Feedback does not change the rules or delay input. Effects are separate HTML layers, leaving the Canvas test comparisons focused on the actual board. Pause, focus loss, and restart stop active sounds and clear effects. Finish feedback ends after 450 ms. Reduced-motion preferences suppress these animated effects; score/outcome text still provides feedback.
+
+Tests cover transition-to-feedback selection, audio opt-in/mute and failure handling, browser effect cleanup/reduced motion, and sound state across restart/refresh. Browser audio scheduling uses a simulated device and does not verify actual audibility or volume. Listen locally for all three cues; win scheduling is tested with a deterministic logic fixture rather than a manual full-board run. Review volume and visual intensity before committing.
+
+Current milestone checks and pending browser execution are recorded in LEARNING.md. Run `npm test`, `npm run check`, `npm run build`, and `npm run test:browser`.
+
+
+Sound/effects automated result: all 11 Chromium browser tests passed locally in 12.7 seconds (user-provided output), alongside 29 Node tests, type checking, and build. Listening and visual approval remain pending; the simulated-audio test does not verify speaker output.

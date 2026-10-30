@@ -22,6 +22,7 @@
         <canvas id="board" width="400" height="400" aria-label="Snake board. The ivory serpent has a pale face, dark hair, golden eyes, and purple markings; orange fruit is food." aria-describedby="instructions status">
           This game requires Canvas support and keyboard controls.
         </canvas>
+        <div id="effects" class="effects" aria-hidden="true"></div>
         <section id="overlay" class="overlay" aria-labelledby="overlay-title">
           <h2 id="overlay-title">Ready to play?</h2>
           <p id="overlay-message">Eat orange food. Avoid walls and your body.</p>
@@ -31,6 +32,8 @@
         <button id="action" type="button">Start</button>
         <button id="restart" type="button" hidden>Restart</button>
       </div>
+      <button id="sound" class="sound-toggle" type="button" aria-pressed="false">Sound: off</button>
+      <p id="sound-status" class="sr-only" role="status"></p>
       <section class="speed-settings" aria-labelledby="speed-title">
         <h2 id="speed-title">Movement speed</h2>
         <div id="speed-controls" class="speed-options" role="group" aria-labelledby="speed-title" aria-describedby="speed-description">

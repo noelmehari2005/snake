@@ -162,3 +162,26 @@ Midnight backdrop refinement: using the supplied moon/cloud references, the surr
 
 
 Final visual milestone result: after the midnight sky, moon, flowing-cloud, and character-label refinements, the user approved the appearance. User-provided local output confirms all eight Chromium tests passed in 7.6 seconds. Together with the existing 26 passing logic tests, type checking, and production build, this completes the visual checkpoint within documented coverage. No commit or push has been made for this milestone.
+
+
+## Version two, milestone 3: sounds and effects
+
+AI implemented the authorized feedback milestone. No commit or push has been made.
+
+- `feedbackFor` derives one event from a game transition; a win takes priority over the simultaneous final food. Ordinary renders, pause/resume, and completed runs do not trigger new sounds.
+- `GameAudio` creates a Web Audio context only on explicit sound opt-in. Oscillators and gain envelopes generate low-volume short cues. Muting, pausing, restarting, and focus loss stop active/scheduled voices. Natural ends disconnect nodes. Audio failure leaves sound disabled without blocking gameplay.
+- `GameEffects` owns short-lived DOM particles/pulse/glows. An animation-frame expiry clears them after 450 ms; game state remains independent. The head pulse lasts 90 ms so it finishes before the fastest next move. Pause/reset/focus loss clear the layer. Reduced-motion changes immediately clear effects; new effects are suppressed while reduction is requested.
+- Sound preference is session state, preserved on restart and reset by refresh. No downloaded assets, background music, or new dependencies are used.
+- Initial Node execution caught unsupported TypeScript parameter-property syntax in strip-only mode. Constructors were rewritten with ordinary fields/assignments rather than changing the test runner.
+- Added logic tests verify event priority, default silence, opt-in, cue scheduling, mute/stop, and unavailable/blocked audio. Three browser cases cover effect expiry/cleanup, reduced motion, and real UI integration with a simulated audio device.
+- Browser-suite execution remains blocked before cases start: the preview server cannot bind 127.0.0.1:4173 (EPERM). Previous eight-test success predates this milestone. All 11 browser cases require local execution.
+
+Local review: enable sound, eat food, pause/resume, mute, lose, and restart. Confirm no unwanted sound after pause or restart and sensible volume. Check a small eating burst/head pulse and subtle finish glow; use reduced-motion settings to verify animation suppression. Automated audio tests verify scheduling, not what the speakers sound like. A full-board win melody is covered in logic scheduling; a manual full-board win is not claimed.
+
+Final local checks for this implementation: `npm run check`, all 29 Node tests, `npm run build`, browser-test source syntax checking, and `git diff --check` passed. The expanded 11-case browser suite and listening/visual review remain pending.
+
+
+Sound/effects browser verification: user-provided local output confirms all 11 Chromium tests passed in 12.7 seconds, including effects expiry/cleanup, reduced-motion suppression, and sound opt-in/mute/persistence integration with a simulated audio device. The 29 Node tests, type checking, and production build also pass. Actual audio volume/timbre and subjective visual intensity still await local user review. No commit or push has been made.
+
+
+Listening review: the user confirmed hearing both eating and loss cues, then authorized the sounds/effects commit. Win audibility was not manually confirmed; its event selection and scheduling remain covered by automated tests. No audio changes were made after that clarification.

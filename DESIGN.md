@@ -158,3 +158,8 @@ Midnight backdrop refinement: using the supplied moon/cloud references, the surr
 
 
 Final visual review: the user approved the midnight moon/cloud direction and Orochimaru labels. A subsequent local Chromium rerun passed all eight browser cases in 7.6 seconds. Visual milestone implementation/review is complete; commit approval remains separate. Sounds/effects are still deferred.
+
+
+## Version two sound/effects implementation
+
+Implemented initially-off sound with a visible pressed-state toggle, session-only preference persistence, generated eating/loss/win cues, food particles, a short eating head pulse, and 450 ms finish glows. Audio context is created/resumed only after opt-in. Effects are separate presentation state derived from game transitions; game rules and movement timing are unchanged. Pause/focus loss/restart clear feedback; reduced motion disables animated effects. No music is included. The user must review actual sound and effects, and approve a separate commit after verification.

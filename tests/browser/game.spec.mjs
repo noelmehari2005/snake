@@ -166,3 +166,71 @@ test('paused speed changes keep the board paused and survive restart; reload res
   await page.reload();
   await expect(page.getByRole('button', { name: 'Normal', exact: true })).toHaveAttribute('aria-pressed', 'true');
 });
+
+test('eating effects expire, pause clears feedback, and restart clears finish feedback', async ({ page }) => {
+  await page.getByRole('button', { name: 'Start', exact: true }).click();
+  await page.clock.runFor(200);
+  await expect(page.locator('#effects')).toHaveAttribute('data-effect', 'eat');
+  await expect(page.locator('.food-particle')).toHaveCount(6);
+  await page.getByRole('button', { name: 'Pause', exact: true }).click();
+  await expect(page.locator('#effects')).not.toHaveAttribute('data-effect', /.+/);
+  await expect(page.locator('.food-particle')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Restart', exact: true }).click();
+  await page.getByRole('button', { name: 'Start', exact: true }).click();
+  await page.clock.runFor(700);
+  await expect(page.locator('#effects')).not.toHaveAttribute('data-effect', /.+/);
+  await page.clock.runFor(1000);
+  await expect(page.getByRole('heading', { name: 'Game over', exact: true })).toBeVisible();
+  await expect(page.locator('#effects')).toHaveAttribute('data-effect', 'loss');
+  await page.getByRole('button', { name: 'Restart', exact: true }).click();
+  await expect(page.locator('#effects')).not.toHaveAttribute('data-effect', /.+/);
+});
+
+test('reduced motion suppresses animated feedback without affecting scoring', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.getByRole('button', { name: 'Start', exact: true }).click();
+  await page.clock.runFor(200);
+  await expect(page.locator('#score')).toHaveText('Score: 1');
+  await expect(page.locator('#effects')).not.toHaveAttribute('data-effect', /.+/);
+  await expect(page.locator('.food-particle')).toHaveCount(0);
+});
+
+test('sound is opt-in, plays on events, stops on pause/mute, and survives restart', async ({ page }) => {
+  // Stub only the audio device; exercise the real UI and cue scheduling in-browser.
+  await page.addInitScript(() => {
+    window.audioCalls = { contexts: 0, starts: 0, stops: 0 };
+    window.AudioContext = class {
+      state = 'running'; currentTime = 0; destination = {};
+      constructor() { window.audioCalls.contexts++; }
+      async resume() {}
+      createGain() {
+        return { gain: { setValueAtTime() {}, linearRampToValueAtTime() {} }, connect() {}, disconnect() {} };
+      }
+      createOscillator() {
+        return { frequency: { setValueAtTime() {} }, connect() {}, disconnect() {},
+          start() { window.audioCalls.starts++; }, stop() { window.audioCalls.stops++; } };
+      }
+    };
+  });
+  await page.reload();
+  await expect(page.getByRole('button', { name: 'Sound: off' })).toHaveAttribute('aria-pressed', 'false');
+  await page.getByRole('button', { name: 'Start', exact: true }).click();
+  await page.clock.runFor(200);
+  expect(await page.evaluate(() => window.audioCalls.contexts)).toBe(0);
+  await page.getByRole('button', { name: 'Sound: off' }).click();
+  await expect(page.getByRole('button', { name: 'Sound: on' })).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'Pause', exact: true }).click();
+  await page.getByRole('button', { name: 'Restart', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Sound: on' })).toBeVisible();
+  await page.getByRole('button', { name: 'Start', exact: true }).click();
+  await page.clock.runFor(200);
+  expect(await page.evaluate(() => window.audioCalls.starts)).toBe(2);
+  await page.getByRole('button', { name: 'Pause', exact: true }).click();
+  expect(await page.evaluate(() => window.audioCalls.stops)).toBe(4);
+  await page.getByRole('button', { name: 'Sound: on' }).click();
+  await page.getByRole('button', { name: 'Resume', exact: true }).click();
+  await page.clock.runFor(1700);
+  expect(await page.evaluate(() => window.audioCalls.starts)).toBe(2);
+  await page.reload();
+  await expect(page.getByRole('button', { name: 'Sound: off' })).toBeVisible();
+});
