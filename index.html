@@ -9,12 +9,17 @@
   </head>
   <body>
     <main>
+      <aside class="character-card" aria-label="Orochimaru character portrait">
+        <img src="./art/serpent-portrait.svg" width="200" height="240" alt="Stylized Orochimaru-inspired white serpent with dark hair, golden eyes, and an open fanged mouth" />
+        <p>Orochimaru</p>
+        <span>Akatsuki nights</span>
+      </aside>
       <header class="game-header">
-        <div><p class="eyebrow">A classic arcade game</p><h1>Snake</h1></div>
+        <div><p class="eyebrow">Akatsuki · Orochimaru</p><h1>Snake</h1></div>
         <p id="score" class="score">Score: 0</p>
       </header>
       <div class="board-frame">
-        <canvas id="board" width="400" height="400" aria-label="Snake board. Light green is the head; orange circles are food." aria-describedby="instructions status">
+        <canvas id="board" width="400" height="400" aria-label="Snake board. The ivory serpent has a pale face, dark hair, golden eyes, and purple markings; orange fruit is food." aria-describedby="instructions status">
           This game requires Canvas support and keyboard controls.
         </canvas>
         <section id="overlay" class="overlay" aria-labelledby="overlay-title">
@@ -37,7 +42,7 @@
         <p class="hint">Change speed anytime. A change resets the wait until the next move.</p>
       </section>
       <p id="instructions">Arrow keys or WASD to turn. Enter to start. Space to pause or resume.</p>
-      <p class="hint">One point per food. Switching tabs pauses the game. Pause to restart.</p>
+      <p class="hint">Guide Orochimaru through the shadows. One point per food. Switching tabs pauses the game. Pause to restart.</p>
       <p id="status" class="sr-only" role="status"></p>
       <noscript>Enable JavaScript to play Snake.</noscript>
     </main>

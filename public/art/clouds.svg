@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="crimson" x1="0" y1="0" x2="0.8" y2="1">
+      <stop stop-color="#b82d40"/><stop offset="0.55" stop-color="#851d35"/><stop offset="1" stop-color="#421a35"/>
+    </linearGradient>
+    <g id="cloud" stroke="#d9c6d4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path fill="url(#crimson)" d="M12 140C35 156 53 142 70 129C69 100 91 79 123 82C128 51 154 39 182 49C196 18 239 21 254 57C291 48 322 73 319 105C351 128 337 172 304 183C294 215 252 229 223 211C199 235 157 226 143 204C106 224 79 202 64 183C42 181 24 167 12 140Z"/>
+      <g fill="none" stroke-width="2.8">
+        <path d="M254 57C274 83 252 110 226 101C209 95 209 75 220 68"/>
+        <path d="M319 105C292 94 274 117 284 140C289 151 300 155 310 151"/>
+        <path d="M143 204C124 177 144 151 171 159C183 162 187 172 187 181"/>
+      </g>
+      <path d="M73 170C46 168 27 159 12 140" fill="none" stroke="#bc7e93" stroke-width="1.5"/>
+    </g>
+  </defs>
+  <g opacity="0.65">
+    <use href="#cloud" transform="translate(-75 140) rotate(-9 170 125) scale(1.15)"/>
+    <use href="#cloud" transform="translate(1280 255) rotate(9 170 125) scale(1.05)"/>
+    <use href="#cloud" transform="translate(-100 680) rotate(12 170 125) scale(1.3)"/>
+    <use href="#cloud" transform="translate(1200 740) rotate(-12 170 125) scale(1.3)"/>
+  </g>
+  <g opacity="0.2"><use href="#cloud" transform="translate(540 -100) scale(1.1)"/></g>
+</svg>

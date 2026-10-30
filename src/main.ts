@@ -23,11 +23,17 @@ const statusElement = requiredElement('#status', HTMLElement);
 const overlay = requiredElement('#overlay', HTMLElement);
 const overlayTitle = requiredElement('#overlay-title', HTMLElement);
 const overlayMessage = requiredElement('#overlay-message', HTMLElement);
-canvas.width = gridSize * cellSize;
-canvas.height = gridSize * cellSize;
+const logicalSize = gridSize * cellSize;
+// Keep the 400-unit game coordinates, but provide enough pixels for a 600px
+// desktop board at the display's density. CSS shrinks it on smaller screens.
+const renderScale = Math.max(1.5, window.devicePixelRatio * 1.5);
+canvas.width = Math.round(logicalSize * renderScale);
+canvas.height = canvas.width;
 const drawingContext = canvas.getContext('2d');
 if (!drawingContext) throw new Error('A 2D drawing context is unavailable.');
 const context = drawingContext;
+const pixelScale = canvas.width / logicalSize;
+context.setTransform(pixelScale, 0, 0, pixelScale, 0, 0);
 
 // Preferences belong to the session, not the run: restarting preserves them.
 let speed: Speed = defaultSpeed;
@@ -35,7 +41,7 @@ let game = createGame();
 let clock = freshClock();
 
 function render(): void {
-  drawBoard(context, game.snake, game.food);
+  drawBoard(context, game.snake, game.food, game.direction);
   const screen = screenFor(game);
   // Hiding a focused element can synchronously move focus to the document body.
   const actionHadFocus = document.activeElement === actionButton;

@@ -120,6 +120,8 @@ test('live speed changes stay playing, preserve a queued turn, and reset partial
   await page.clock.runFor(200);
   await expect(page.locator('#score')).toHaveText('Score: 1');
   await page.keyboard.press('ArrowUp');
+  const emptyCell = await page.locator('#board').evaluate((canvas) =>
+    Array.from(canvas.getContext('2d').getImageData(Math.floor(230 * canvas.width / 400), Math.floor(190 * canvas.height / 400), 1, 1).data));
   const prior = await boardImage(page);
   await page.getByRole('button', { name: 'Fast', exact: true }).click();
   await expect(page.locator('#overlay')).toBeHidden();
@@ -132,8 +134,8 @@ test('live speed changes stay playing, preserve a queued turn, and reset partial
   expect(await boardImage(page)).not.toBe(prior);
   // The queued up-turn survives: head is now at (11, 9), rather than (12, 10).
   const headColor = await page.locator('#board').evaluate((canvas) =>
-    Array.from(canvas.getContext('2d').getImageData(230, 190, 1, 1).data));
-  expect(headColor).toEqual([187, 247, 208, 255]);
+    Array.from(canvas.getContext('2d').getImageData(Math.floor(230 * canvas.width / 400), Math.floor(190 * canvas.height / 400), 1, 1).data));
+  expect(headColor).not.toEqual(emptyCell);
   const moved = await boardImage(page);
   await page.getByRole('button', { name: 'Slow', exact: true }).click();
   await expect(page.locator('#overlay')).toBeHidden();

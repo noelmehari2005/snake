@@ -140,3 +140,21 @@ Milestone 2 temporarily paused at board edges. Milestone 3 replaces that guard w
 On a changed speed, reset accumulated movement progress and wait a full interval at the new speed, without changing phase, board, score, direction, or queued turn. Selecting the same speed leaves timing alone. The alternative is preserving fractional interval progress. This choice was raised again after implementation. The user tried it and approved live changes with the full-interval reset; that timing review is complete. Commit authorization remains separate.
 
 Speed milestone implementation: UI and timing integration are prepared; 26 logic tests, type checking, and build pass. The user-provided local rerun confirms all eight Chromium browser tests passed in 6.8 seconds. Artwork/audio/effects have not been implemented.
+
+
+### Version two visual milestone: first pass
+
+Implemented the agreed white-serpent/garden direction with native Canvas and CSS rather than raster assets. Body connectors follow consecutive cells only, the tail tapers along its final segment, and facial features rotate with the movement direction. Decorative drawing stays within the union of occupied cells; grid collisions remain unchanged. The board uses subtle green tiles, with brighter orange fruit. The surrounding garden is static CSS artwork, leaving sounds and effects for the next milestone.
+
+First-pass checks: type checking, 26 logic tests, and build pass. User-provided local output confirms all eight Chromium browser tests passed in 7.2 seconds after correcting Canvas drawing-state leakage. Visual style approval remains pending; review the appearance before approving a commit.
+
+
+### Revised visual review direction
+
+After reviewing the garden proposal, the user supplied references showing Orochimaru's pale human-like face, dark hair, open mouth, and white scaled body. Agreed to try a larger, sharper board (approximately 600 pixels on desktop), a simplified reference-based moving head, a larger portrait, and an Akatsuki-style black/red cloud background. This supersedes the garden theme. Keep collision cells and game rules unchanged. First-pass art and any rollback remain reviewable before commit. User-provided local output confirms all eight Chromium tests passed in 7.6 seconds for this revision. Appearance approval remains pending.
+
+
+Midnight backdrop refinement: using the supplied moon/cloud references, the surround now has a cool navy-purple sky, a large pale pink moon with a restrained crimson glow, and asymmetrically placed crimson clouds with light outlines and curled interior strokes. The earlier regular cloud tile is replaced by a flowing authored SVG composition. Visible character labels now say Orochimaru. All scenery remains static, behind the game, and ignores pointer events. Type checking/production build pass; revised appearance and local browser checks remain pending. No commit or push was made.
+
+
+Final visual review: the user approved the midnight moon/cloud direction and Orochimaru labels. A subsequent local Chromium rerun passed all eight browser cases in 7.6 seconds. Visual milestone implementation/review is complete; commit approval remains separate. Sounds/effects are still deferred.

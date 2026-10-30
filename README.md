@@ -15,9 +15,9 @@ A 20 × 20 board, three-segment starting snake, food, growth, scoring, wall/self
 
 Restart returns to the ready screen; press Start to begin a fresh run. Switching tabs/windows pauses automatically and requires explicit resume. Focused buttons use normal Enter/Space activation. Immediate reversal is rejected, and only one valid turn is accepted per tick.
 
-The light green segment is the head and orange circles are food. Finished screens preserve the board and show the final score. The game requires a keyboard; the board adapts to narrow windows, but touch controls and a screen-reader equivalent for spatial gameplay are not implemented.
+The ivory serpent has a golden-eyed head with purple markings, and orange fruit is food. Finished screens preserve the board and show the final score. The game requires a keyboard; the board adapts to narrow windows, but touch controls and a screen-reader equivalent for spatial gameplay are not implemented.
 
-See [DESIGN.md](DESIGN.md) for decisions and scope, and [LEARNING.md](LEARNING.md) for concepts, collaboration, and verification. Version-two speed controls are implemented for review. The moonlit garden, white-serpent avatar, sounds, and effects remain deferred.
+See [DESIGN.md](DESIGN.md) for decisions and scope, and [LEARNING.md](LEARNING.md) for concepts, collaboration, and verification. Version-two speed controls are implemented for review. The moonlit garden and stylized white-serpent avatar are implemented for first-pass visual review; sounds and effects remain deferred.
 
 ## Run locally
 
@@ -112,3 +112,24 @@ Choose Slow (220 ms), Normal (150 ms), or Fast (100 ms) using the always-availab
 A changed speed discards the partial movement interval and waits one full interval at the new speed, measured from the change. The full-interval reset was tried and approved in review. Selecting the same speed does not reset timing. Board, score, direction, and queued input are preserved. Paused games stay paused; restarting preserves the selected speed. Reloading restores Normal. Score remains one point per food at every speed.
 
 Current verification: all 26 Node tests, type checking, and production build pass. User-provided local terminal output confirms all eight Chromium browser tests passed in 6.8 seconds, including speed thresholds, live changes, paused changes, restart persistence, and refresh defaults.
+
+
+## Version two: visual pass (review pending)
+
+The renderer draws a simplified Orochimaru-style white serpent with golden eyes, purple markings and scale details, a small forked tongue, and a tapered tail. Only adjacent entries in the ordered snake array are connected, so nearby parallel body sections do not merge. The head rotates using the actual movement direction. Presentation does not change grid positions or collision rules.
+
+The garden uses CSS moonlight, bamboo-like stems, and foliage silhouettes around a subdued green board. All artwork is drawn in Canvas/CSS; no external images, fonts, or character assets are downloaded. Orange fruit remains distinct in both shape and color. Decorative page layers cannot intercept input. No audio or animation effects are added in this milestone.
+
+Verification: 26 logic tests, type checking, and production build pass. After fixing Canvas state leakage between redraws, user-provided local output confirms all eight Chromium tests passed in 7.2 seconds for this visual pass. Review all four head directions, straight and bent body sections, tail taper, dense coils, food visibility, overlays, and 320-pixel layout. Appearance is a first pass pending user feedback, not an exact reproduction of an anime frame.
+
+
+### Revised visual direction: reference-based serpent and red clouds
+
+The earlier garden pass is superseded by an Akatsuki-style charcoal/red cloud surround and a dark-haired, human-faced white serpent inspired by the supplied reference images. A local SVG portrait makes facial details visible outside the moving sprite; on smaller windows it moves above the header. The portrait/cloud artwork is authored vector art, not a downloaded anime frame.
+
+The desktop board now displays at approximately 600 pixels, retaining 20 by 20 logical cells. Its Canvas backing resolution is scaled for desktop enlargement and device pixel density; drawing and collision coordinates remain unchanged. Browser tests sample logical positions through the backing-pixel scale. No gameplay, speed, or audio changes are included.
+
+Revised-pass verification: 26 Node tests, type checking, build, and whitespace checks pass. User-provided local output confirms all eight Chromium tests passed in 7.6 seconds for the revised artwork. Visual approval remains pending.
+
+
+The latest background refinement uses a midnight navy-purple sky, a pale moon with crimson glow, and flowing red clouds with light curled outlines based on the supplied visual references. The visible character name is Orochimaru. These are authored CSS/SVG decorations, with gameplay unchanged. Build/type checks pass. The user approved the final appearance and supplied a local Chromium rerun with all eight browser tests passing in 7.6 seconds.

@@ -122,3 +122,43 @@ Review before commit: try changing speed mid-run and decide whether the full-int
 
 
 Speed milestone review outcome: the user tried live speed changes and approved retaining the full-interval clock reset. A subsequent user-provided terminal run confirms all eight Chromium browser tests passed in 6.8 seconds. Combined with 26 passing Node tests, type checking, and the production build, the speed-settings checkpoint is verified within the documented coverage. Commit/push authorization remains separate; nothing has been committed or pushed for this milestone.
+
+
+## Version two, milestone 2: white serpent and moonlit garden
+
+AI prepared a first visual pass following approval to begin. No commit or push is included.
+
+- Canvas save/translate/rotate/restore draws the same facial design in all four directions. Movement direction is passed to the renderer, while game rules remain unchanged.
+- Rounded paths connect ordered neighboring segments. Adjacency checks avoid bridging invalid gaps, and body order prevents merging nearby coils. The tail uses a rotated tapered shape and stops the thick connector at the shared cell boundary.
+- Ivory body, golden eyes, purple markings/scale chevrons, and a small forked tongue simplify the requested Orochimaru-style serpent for 20-pixel cells. Orange fruit stays visually distinct.
+- CSS gradients produce the moon, bamboo-like stems, and foliage. Decorative layers are behind the main panel and ignore pointer events. No raster image, external asset, extra dependency, or audio was added.
+- The existing browser test checked a hard-coded green pixel. It now compares the expected head cell against its earlier empty appearance, preserving the queued-turn check without depending on a specific palette.
+- `npm run check`, all 26 Node tests, `npm run build`, and `git diff --check` pass. The browser-suite attempt failed before test execution because the preview server could not bind 127.0.0.1:4173 (EPERM). No new browser success is claimed.
+
+Visual review checklist: inspect all four facing directions, turns, tapered tail, and adjacent coils; verify food and grid readability; check overlays/buttons/speed settings and narrow layout. The initial serpent silhouette and garden style await user review before commit. Sounds and feedback effects are still deferred.
+
+
+Visual browser follow-up: the user-provided run passed six of eight cases. Restart and pre-movement image equality failed. The new renderer left `lineCap`/`lineJoin` settings on the shared Canvas context, so later grid/food strokes differed from the first frame even with unchanged data. The renderer now saves the context before drawing and restores it in a finally block, including early returns. Original browser assertions are retained. A local rerun is required to verify the fix; no browser success is claimed yet.
+
+
+Visual browser rerun: user-provided terminal output confirms all eight Chromium cases passed in 7.2 seconds after isolating Canvas context state. Together with 26 passing Node tests, type checking, and build, the automated checks pass. This does not replace review of the serpent silhouette, direction details, garden appearance, or dense-coil readability. No commit or push has been made for this visual milestone.
+
+
+## Visual revision after reference review
+
+The user requested more visible eyes/textures and the human-faced white-serpent form shown in supplied reference images, plus an Akatsuki/Uchiha-themed surround. Discussion selected an Akatsuki-style cloud background, larger/sharper board, reference-based sprite, and portrait. AI authored local SVG portrait/cloud assets and revised Canvas/CSS; no external art was downloaded.
+
+- Canvas backing pixels are scaled by 1.5 times device pixel ratio (minimum 1.5), while transforms preserve the original 400-unit logical drawing space. CSS supports a 600-pixel desktop board without changing the 20 by 20 collision grid. A page reload recalculates density; live monitor-density changes are not separately observed.
+- The moving head now emphasizes dark hair, a pale face, gold eyes, purple markings, and an open fanged mouth. The larger SVG portrait provides detail that cannot fit clearly in a single cell.
+- The surround uses local cloud motifs and charcoal/red accents; the board remains visually restrained. Responsive layout keeps the portrait beside the panel on wide screens and above it on smaller screens.
+- Canvas browser pixel sampling was updated to account for backing resolution. Existing context save/restore remains in place to prevent redraw differences.
+- 26 Node tests, type checking, production build, and whitespace checks pass. Browser-suite execution and revised visual approval remain pending. Previous browser success predates this revision. No commit/push has been made.
+
+
+Revised visual-pass browser result: user-provided terminal output confirms all eight Chromium tests passed in 7.6 seconds, including redraw/reset equality and resolution-adjusted pixel sampling. All automated checks pass within the suite's existing coverage. The revised artwork still awaits visual feedback and approval. No commit or push has been made.
+
+
+Midnight backdrop refinement: using the supplied moon/cloud references, the surround now has a cool navy-purple sky, a large pale pink moon with a restrained crimson glow, and asymmetrically placed crimson clouds with light outlines and curled interior strokes. The earlier regular cloud tile is replaced by a flowing authored SVG composition. Visible character labels now say Orochimaru. All scenery remains static, behind the game, and ignores pointer events. Type checking/production build pass; revised appearance and local browser checks remain pending. No commit or push was made.
+
+
+Final visual milestone result: after the midnight sky, moon, flowing-cloud, and character-label refinements, the user approved the appearance. User-provided local output confirms all eight Chromium tests passed in 7.6 seconds. Together with the existing 26 passing logic tests, type checking, and production build, this completes the visual checkpoint within documented coverage. No commit or push has been made for this milestone.
